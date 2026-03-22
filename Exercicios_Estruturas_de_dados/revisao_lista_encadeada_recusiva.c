@@ -50,25 +50,25 @@ int count(Node* n, int x){
 }
 
 // Soma 1 em todos os números pares da lista
-int sumEven(Node** n){
-    if (*n != NULL) {
-        if ((*n)->info % 2 == 0)
-            (*n)->info += 1;
-        sumEven(&(*n)->prox);
+int sumEven(Node* n){
+    if (n != NULL) {
+        if (n->info % 2 == 0)
+            n->info += 1;
+        sumEven(n->prox);
     }
 }
 
 // Remove um elemento X da lista
 Node* removeElem(Node* n, int x){
     if (n != NULL){
-        n->prox = removeElem(n->prox, x);
         if (n->info == x){
-            return n->prox;
+            Node* aux = n;
+            n = n->prox;
+            free(aux);
         } else {
-            return n;
+            l->prox = removeElem(n->prox, x);
         }
-    } else {
-        return n;
+        return l;
     }
 }
 
@@ -110,6 +110,7 @@ int main() {
     n = insert(n, 2);
     n = insert(n, 3);
     n = insert(n, 4);
+    n = insert(n, 4);
     n = insert(n, 5);
     n = insert(n, 7);
     printList(n);
@@ -117,7 +118,7 @@ int main() {
     // printf("Existe um 40? %d\n", exist(n, 40));
     // printf("Soma: %d\n", totalSum(n));
     // printf("Quantos 1s tem? %d\n", count(n, 1));
-    // sumEven(&n);
+    sumEven(n);
     // n = removeElem(n, 55);
     n = ordInsert(n, 10);
 
