@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 typedef struct TreeNode {
     int info;
@@ -31,7 +32,7 @@ TreeNode* ReadTree(FILE *f) {
     }
 }
 
-TreeNode* printTreePre(TreeNode* node){
+void printTreePre(TreeNode* node){
     if (node != NULL){
         printf("%d ", node->info);
         printTreePre(node->left);
@@ -39,7 +40,7 @@ TreeNode* printTreePre(TreeNode* node){
     }
 }
 
-TreeNode* printTreeIn(TreeNode* node){
+void printTreeIn(TreeNode* node){
     if (node != NULL){
         printTreeIn(node->left);
         printf("%d ", node->info);
@@ -47,11 +48,29 @@ TreeNode* printTreeIn(TreeNode* node){
     }
 }
 
-TreeNode* printTreePos(TreeNode* node){
+void printTreePos(TreeNode* node){
     if (node != NULL){
         printTreePos(node->left);
         printTreePos(node->right);
         printf("%d ", node->info);
+    }
+}
+
+void printLevel(TreeNode* a, int cont, int nivel) {
+   if (a != NULL) {
+      if (cont == nivel)
+         printf("%d ", a->info);
+      else {
+         printLevel(a->left, cont+1, nivel); 
+         printLevel(a->right, cont+1, nivel); 
+      }
+   }
+}
+
+void printTreeWidth(TreeNode* node, int h){
+    for(int i = 0; i < h; i++){
+        printLevel(node, 0, i);
+        printf("\n");
     }
 }
 
@@ -85,19 +104,87 @@ void leavesNode(TreeNode* node){
     }
 }
 
+int height(TreeNode* a){
+    if(a==NULL){
+        return 0;
+    }
+    else{
+        int he = height(a->left);
+        int hd = height(a->right);
+        if(he>hd){
+            return he+1;
+        }
+            else{
+                return hd+1;
+            }
+        }
+    }
+
+  int NivelCompleto(TreeNode* a, int cont, int nivel){
+        if(a != NULL){
+
+           int r = NivelCompleto(a->left, cont+1, nivel) + NivelCompleto(a->right, cont+1, nivel);
+
+           if(r >=1){
+            return 1;
+           }
+        }
+
+        if(cont <= nivel){
+            if(a == NULL){
+            
+                return 1;
+               
+            }
+        }
+            return 0;
+        }
+    
+    
+
+    int Acha_Nivel(TreeNode* a, int cont, int y){
+    if(a != NULL){
+        if(a->info == y){
+        printf("\nNivel: %d", cont);
+        return 1;
+        }
+        
+        int r = Acha_Nivel(a->left, cont+1, y) + Acha_Nivel(a->right, cont+1, y);
+
+        if(r >= 1){
+        return 1;
+        }
+    }
+    }
+
+int order(TreeNode* a, int min, int max){
+    int r = 0;
+    if(a != NULL){ 
+        if (a->info < min || a->info > max) return 1;
+        r = order(a->left, min, a->info);
+        if (r == 1) return 1;
+        r = order(a->right, a->info, max);
+        return r;
+    }
+    return 0;
+}
+
 int main(){
     int choice = 0;
     TreeNode* rootNode;
     FILE* f;
 
-    while (choice != 6){
+    while (choice != 9){
         printf("\n");
         printf("1- Ler uma arvore de um arquivo fornecido pelo usuario\n");
-        printf("2- Imprimir a arvore (opções: pre-ordem; em-ordem; e pos-ordem)\n");
+        printf("2- Imprimir a arvore (opcoes: pre-ordem; em-ordem; pos-ordem; largura)\n");
         printf("3- Verificar se um elemento x existe na arvore\n");
         printf("4- Contar o numero de elementos na arvore\n");
-        printf("5- Imprimir os nos folhas da árvore\n");
-        printf("6- Sair\n");
+        printf("5- Imprimir os nos folhas da arvore\n");
+        printf("6- Verificar se a arvore esta ordenada\n");
+        printf("7- Verificar se uma arvore eh completa\n");
+        printf("8- Imprimir o nivel ao qual o no x pertence\n");
+        printf("9- Sair\n");
         printf("\n");
         printf("Escolha uma opcao: ");
 
@@ -125,6 +212,7 @@ int main(){
                 printf("1 - pre-ordem\n");
                 printf("2 - em-ordem\n");
                 printf("3 - pos-ordem\n");
+                printf("4 - largura\n");
                 printf("Digite a ordem em que voce quer imprimir: ");
                 
                 scanf("%d", &choice2);
@@ -132,7 +220,7 @@ int main(){
                 if (choice2 == 1) printTreePre(rootNode);
                 if (choice2 == 2) printTreeIn(rootNode);
                 if (choice2 == 3) printTreePos(rootNode);
-                
+                if (choice2 == 4) printTreeWidth(rootNode, height(rootNode));
             }
         }
 
@@ -156,6 +244,35 @@ int main(){
             printf("Os nos folhas sao: ");
             leavesNode(rootNode);
         }
+
+        if(choice == 6){
+            
+            if( order(rootNode, INT_MIN, INT_MAX) == 1){
+            printf("\nNao esta ordenada");
+            }else{
+                printf("\nEsta ordenada");
+            }
+        }
+
+        if(choice == 7){
+         int a = height(rootNode);
+            if(  NivelCompleto(rootNode, 0, a - 2) == 1){
+            printf("\nNao esta completa");
+            }else{
+                printf("\nEsta completa");
+            }
+           
+        }
+
+        if(choice == 8){
+            int a;
+            printf("\nO nivel de qual no voce deseja encontrar? ");
+            scanf("%d", &a);
+            if(Acha_Nivel(rootNode, 0, a) != 1){
+                printf("\nNao esta na arvore");
+            }
+        }
+        
     }
 
     return 0;
