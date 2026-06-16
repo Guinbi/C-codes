@@ -69,6 +69,69 @@ void printCombinations3(char* v, int pos, int n) {
     }
 }
 
+// Exercício de Backtracking ditado em sala:
+//      "Imprimir as combinações de tamanho N de (a, b, c, d, e) que não 
+//      possuem vogais repetidas e que tenham pelo menos 1 de cada consoante"
+void comb(char* vet, int pos, int n, char *vetAux){
+    if (pos == n){
+        int contA = 0, contB = 0, contC = 0, contD = 0, contE = 0, i;
+        for(i = 0; i < n; i++){
+            if(vet[i] == 'A')
+                contA++;
+            if(vet[i] == 'B')
+                contB++;
+            if(vet[i] == 'C')
+                contC+  +;
+            if(vet[i] == 'D')
+                contD++;
+            if(vet[i] == 'E')
+                contE++;
+        }
+        if(contA <= 1 && contE <= 1 && contC >= 1 && contB >= 1 && contD >= 1){
+            for(i = 0; i < n; i++){
+                printf("%c", vet[i]);
+            }
+            printf("\n");
+        }
+    } else {
+        int i;
+        for(i = 0; i< 5; i++){
+            vet[pos] = vetAux[pos];
+            comb(vet, pos + 1, n, vetAux);
+        }
+    }
+}
+
+int ContaVerdadeiro(int *vet, int pos){
+    int i ;
+    if (pos == 3){
+        if ((vet[0] && vet[1]) || (!vet[0]) || vet[1] || vet[2])
+            return 1;
+        else 
+            return 0;
+    }
+    else {
+        int c = 0;
+        for (i = 0; i <= 1; i++){
+            vet[pos] = i;
+            c += ContaVerdadeiro(vet, pos + 1);
+        }
+        return c;
+    }
+}
+
+void EhTautologia(){
+    int vet[3];
+    int cont = ContaVerdadeiro(vet, 0);
+    if (cont == 8){
+        printf("Tautologia");
+    } else {
+        printf("Não tautologia");
+    }
+}
+
+// -------------------------------------------------------------
+
 int main(){
     int choice = 0;
     
@@ -99,6 +162,11 @@ int main(){
             printf("A B C D\n");
             printCombinations3(v, 0, 4);
             free(v);
+        }
+        if (choice == 5){
+            char* v = malloc(sizeof(char) * 5);
+            char a[5] = {'A', 'B', 'C', 'D', 'E'};
+            printCombinations4(v, a, 0, 5);
         }
     }    
     return 0;

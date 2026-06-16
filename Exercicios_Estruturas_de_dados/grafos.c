@@ -174,6 +174,55 @@ void cheapest_path(List **g, int b, int* vet, int pos, int current_cost){
     }
 }
 
+void intermediate_paths(List **g, int b, int h, int* vet, int pos){
+    if(vet[pos-1] == b){
+        printf("\n");
+        if (exist(vet, h, pos)){
+            for(int i = 0; i < pos; i++)
+                printf("%d ", vet[i]);
+        }
+    } else {
+        List* p = g[vet[pos - 1]];
+        while(p != NULL){
+            if (!exist(vet, p->dest, pos)){
+                vet[pos] = p->dest;
+                intermediate_paths(g, b, h, vet, pos + 1);
+            }
+            p = p->next;
+        }
+    }
+}
+
+int count_paths = 0;
+void UV_edge_paths(List **g, int b, int u, int v, int* vet, int pos){
+    if(vet[pos-1] == b){
+        int no = 0;
+        printf("\n");
+        for (int i = 0; i < pos; i++){
+            if (vet[i - 1] == u && vet[i] == v){
+                no = 1;
+                break;
+            }
+        }
+        if (no == 0){
+            for (int i = 0; i < pos; i++){
+                printf("%d ", vet[i]);
+            }
+            count_paths += 1;
+            printf("Numero de caminhos: %d", count_paths);
+        }
+    } else {
+        List* p = g[vet[pos - 1]];
+        while(p != NULL){
+            if (!exist(vet, p->dest, pos)){
+                vet[pos] = p->dest;
+                UV_edge_paths(g, b, u, v, vet, pos + 1);
+            }
+            p = p->next;
+        }
+    }
+}
+
 int main(){
     int* vet;
     int n;
@@ -283,6 +332,22 @@ int main(){
                 }
                 printf("\n");
             }
+        }
+
+        if (choice == 10){
+            int h;
+            printf("Digite a origem, destino e intermediario dos caminhos: ");
+            scanf("%d %d %d", &origin, &dest, &h);
+            vet[0] = origin;
+            intermediate_paths(g, dest, h, vet, 1);
+        }
+        if (choice == 11){
+            count_paths = 0;
+            int u, v;
+            printf("Digite a origem, destino, U e V dos caminhos: ");
+            scanf("%d %d %d %d", &origin, &dest, &u, &v);
+            vet[0] = origin;
+            UV_edge_paths(g, dest, u, v, vet, 1);
         }
     }
 }
